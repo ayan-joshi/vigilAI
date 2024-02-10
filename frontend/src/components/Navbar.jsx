@@ -18,7 +18,7 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
-function Navbar() {
+function Navbar({ verification }) {
   // snackbar
   const [openSnack, setOpensnack] = React.useState(false);
   const [authenticate, setAuthentic] = React.useState(false);
@@ -92,6 +92,8 @@ function Navbar() {
         });
       setOpensnack(true);
       setAuthentic(true);
+      verification();
+
       setTimeout(() => {
         setOpensnack(false);
       }, 3000);
@@ -113,14 +115,14 @@ function Navbar() {
 
       // submit-details
 
-      const response = await axios.post(
-        "http://localhost:3000/submit-details",
-        details
-      );
+      // const response = await axios.post(
+      //   "http://localhost:3000/submit-details",
+      //   details
+      // );
 
-      console.log("Response from backend:", response.data);
-      setRequest(response.data);
-      // console.log("setted requestId is ", requestId);
+      // console.log("Response from backend:", response.data);
+      setRequest("yes");
+      // console.log("setted requestId is ", requjestId);
 
       // Handle response from backend if necessary
     } catch (error) {

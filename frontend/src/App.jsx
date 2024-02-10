@@ -29,7 +29,7 @@ function App() {
   const [prompt, setPrompt] = useState(false);
   const [videoUrl, setVideoUrl] = useState(null);
   const [video, setVideo] = useState(null);
-
+  const [isVerified, setVerified] = useState(false);
   // states for the modal
   const [open, setOpen] = React.useState(false);
   const [otp, setOtp] = useState();
@@ -54,6 +54,14 @@ function App() {
   const handleUploadButtonClick = () => {
     document.getElementById("upload-file").click();
   };
+
+  const checkVrification = async () => {
+    setVerified(true);
+  };
+
+  useEffect(() => {
+    console.log(isVerified);
+  }, [isVerified]);
 
   const localUpload = async (event) => {
     const file = event.target.files[0];
@@ -88,11 +96,11 @@ function App() {
   return (
     <div className="flex flex-col justify-evenly w-full h-screen bg-gradient-to-b from-blue-100 via-blue-200 to-blue-500">
       <div className="sticky top-5 flex flex-row items-center justify-center">
-        <Navbar />
+        <Navbar verification={checkVrification} />
       </div>
 
       <div className="flex-1 flex flex-row justify-center items-center h-24">
-        <p className="mt-10 text-center  font-regular font-monserrat  text-xl  text-[10]  w-4/5">
+        <p className="mt-10 text-center  text-2xl  w-4/5">
           A real-time video analysis system that understands natural language
           prompts and highlights relevant sections based on object detection,
           action recognition, and attribute recognition.
@@ -100,7 +108,17 @@ function App() {
       </div>
 
       <div className="h-full flex justify-center items-center">
-        <div className="w-11/12 h-5/6 flex flex-row justify-between items-center border rounded-3xl bg-[#E1F6F9]">
+        <div className="w-11/12 h-5/6 flex flex-row justify-between items-center border rounded-3xl bg-[#E1F6F9]  realtive">
+          {/* Div to cover the whole area */}
+          {!isVerified && (
+            <div
+              className="font-monserrat   absolute top-50 left-15 w-11/12   isolate aspect-video     h-[63%]   bg-[#DBE0FA] bg-opacity-70 z-10  text-black text-5xl  flex flex-col justify-center items-center  rounded-3xl  "
+              onClick={() => console.log("Covering Div Clicked")}
+              style={{ backdropFilter: "blur(10px)" }}
+            >
+              Authenticate Yourself to use VigilAI
+            </div>
+          )}
           <div
             className="w-1/2 flex flex-col justify-center items-center h-full rounded-3xl"
             style={{
@@ -112,7 +130,6 @@ function App() {
             <div className="flex flex-row justify-center items-center gap-4 text-center p-4 font-monserrat h-full rounded-3xl">
               {video ? (
                 <div className="flex flex-row justify-center items-center gap-3">
-                  <label htmlFor="prompt">Prompt : </label>
                   <TextField
                     id="outlined-basic"
                     label="Prompt ..."
@@ -161,7 +178,10 @@ function App() {
                       style={{ display: "none" }}
                     />
 
-                    <button className="h-20 w-72 rounded-full bg-gray-300 rounded-3xl bg-clip-padding backdrop-filter backdrop-blur-2xl bg-opacity-65 text-center flex flex-row justify-center items-center">
+                    <button
+                      className="h-20 w-72 rounded-full bg-gray-300 rounded-3xl bg-clip-padding backdrop-filter backdrop-blur-2xl bg-opacity-65 text-center flex flex-row justify-center items-center  "
+                      disabled={!isVerified}
+                    >
                       Upload
                     </button>
                   </div>
