@@ -4,7 +4,6 @@ import "./App.css";
 import TextField from "@mui/material/TextField";
 import CircularProgress from "@mui/material/CircularProgress";
 import UploadIcon from "@mui/icons-material/Upload";
-import Vimeo from "vimeo";
 import axios from "axios";
 
 function App() {
@@ -12,6 +11,7 @@ function App() {
   const [file, setFile] = useState(null);
   const [prompt, setPrompt] = useState(false);
   const [videoUrl, setVideoUrl] = useState(null);
+  const [video, setVideo] = useState(null);
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
@@ -21,90 +21,31 @@ function App() {
     document.getElementById("upload-file").click();
   };
 
-  const uploadVideoToVimeo = async () => {
-    if (!file) {
-      alert("Please select a file to upload.");
-      return;
-    }
-    setLoading(true);
-    // console.log("hey this is running");
-    // const vimeoClient = new Vimeo.Vimeo(
-    //   "8abd2047fee2653ba9058f29b1076f06456f7bb8",
-    //   "P8Ddv0yyY6zGKyS61ctiidxUNXga/4z0609bVgVqQMbxbEIBlMWvrfcuk12rqaEt8ytFeVZ2WoNcRRUEEXmfXv86sJvAFfHAFfpk2+y0RtkdyWBxCizgw1a5RFyhTYYn",
-    //   "7ee34a800183a89011570c0a42c392e2"
-    // );
-
-    // // Perform upload operation to Vimeo
-    // vimeoClient.upload(
-    //   file,
-    //   {},
-    //   (uri) => {
-    //     setLoading(false);
-    //     console.log("Video uploaded successfully. Vimeo URI:", uri);
-
-    //     // Now we need to get the video URL using the Vimeo API
-    //     vimeoClient.request(
-    //       {
-    //         path: uri,
-    //       },
-    //       function (error, body, status_code, headers) {
-    //         if (error) {
-    //           console.error("Error fetching video details:", error);
-    //           return;
-    //         }
-    //         const videoDetails = JSON.parse(body);
-    //         setVideoUrl(videoDetails.link);
-    //         console.log("Video URL:", videoDetails.link);
-    //       }
-    //     );
-    //   },
-    //   (bytes_uploaded, bytes_total) => {
-    //     console.log(`${bytes_uploaded} bytes uploaded out of ${bytes_total}`);
-    //   },
-    //   (error) => {
-    //     setLoading(false);
-    //     console.error("Error uploading video:", error);
-    //   }
-    // );
+  const localUpload = async (event) => {
+    const file = event.target.files[0];
+    const videoObjectURL = URL.createObjectURL(file);
+    setVideo(videoObjectURL);
     try {
-      const formData = new FormData();
-      formData.append("video", file);
-      console.log("upload route frontend");
-
-      const response = await axios.post(
-        "http://localhost:3000/upload",
-        formData
-      ); // Send to backend endpoint
-
-      setVideoUrl(response.data.video.link);
-      console.log("Video URL:", response.data.video.link);
-    } catch (error) {
-      console.error("Error uploading to server:", error);
-      // Handle error appropriately (e.g., display error message to user)
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // new code from Ui to server
-  const handleUploadToServer = async () => {
-    setLoading(true);
-    console.log("clicked upload");
-
-    try {
+      setLoading(true);
       const formData = new FormData();
       formData.append("video", file);
 
+      // Send the file to your backend server for saving
       const response = await axios.post(
-        "http://localhost:3000/upload",
-        formData
-      ); // Send to backend endpoint
+        "http://localhost:3000/api/saveVideo",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
-      setVideoUrl(response.data.video.link);
-      console.log("Video URL:", response.data.video.link);
+      // Handle response from server if necessary
+      console.log("Video saved successfully:", response.data);
     } catch (error) {
-      console.error("Error uploading to server:", error);
-      // Handle error appropriately (e.g., display error message to user)
+      console.error("Error saving video:", error);
+      // Handle errors
     } finally {
       setLoading(false);
     }
@@ -117,7 +58,7 @@ function App() {
       </div>
 
       <div className="flex-1 flex flex-row justify-center items-center">
-        <p className="mt-10 text-center font-medium text-xl font-roboto w-4/5">
+        <p className="mt-10 text-center  text-xl  font-comic  w-4/5">
           A real-time video analysis system that understands natural language
           prompts and highlights relevant sections based on object detection,
           action recognition, and attribute recognition.
@@ -135,7 +76,7 @@ function App() {
             }}
           >
             <div className="flex flex-row justify-center items-center gap-4 text-center p-4 font-monserrat h-full rounded-3xl">
-              {prompt ? (
+              {video ? (
                 <div className="flex flex-row justify-center items-center gap-3">
                   <label htmlFor="prompt">Prompt : </label>
                   <TextField
@@ -145,7 +86,7 @@ function App() {
                   />
                 </div>
               ) : (
-                <p className="font-medium">
+                <p className="text-xl  font-[10]  ">
                   Please begin by uploading your video prior to initiating the
                   prompt detection process within the content.
                 </p>
@@ -157,6 +98,14 @@ function App() {
               <CircularProgress />
             ) : (
               <div className="flex flex-col justify-center items-center gap-2">
+                {video && (
+                  <div>
+                    <video controls width="400">
+                      <source src={video} type="video/mp4" />
+                      Your browser does not support the video tag.
+                    </video>
+                  </div>
+                )}
                 <div
                   className="h-32 w-72  bg-gray-300 rounded-3xl bg-clip-padding backdrop-filter backdrop-blur-2xl bg-opacity-65 text-center flex flex-col justify-center items-center cursor-pointer"
                   // onClick={handleUploadButtonClick}
@@ -169,18 +118,26 @@ function App() {
                   type="file"
                   id="upload-file"
                   accept="video/*"
-                  onChange={handleFileChange}
+                  onChange={localUpload}
                   style={{ display: "none" }}
                 />
-                {videoUrl && <p>Video URL: {videoUrl}</p>}
-                <button
-                  className="h-20 w-72 rounded-full bg-gray-300 rounded-3xl bg-clip-padding backdrop-filter backdrop-blur-2xl bg-opacity-65 text-center flex flex-row justify-center items-center"
-                  onClick={uploadVideoToVimeo}
-                >
+
+                <button className="h-20 w-72 rounded-full bg-gray-300 rounded-3xl bg-clip-padding backdrop-filter backdrop-blur-2xl bg-opacity-65 text-center flex flex-row justify-center items-center">
                   Upload
                 </button>
               </div>
             )}
+
+            <div>
+              {/* {video && (
+                <div>
+                  <video controls width="400">
+                    <source src={video} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+              )} */}
+            </div>
           </div>
         </div>
       </div>
