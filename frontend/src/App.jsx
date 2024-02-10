@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Navbar from "./components/Navbar";
 import "./App.css";
 import TextField from "@mui/material/TextField";
@@ -26,7 +26,7 @@ const style = {
 function App() {
   const [loading, setLoading] = useState(false);
   const [file, setFile] = useState(null);
-  const [prompt, setPrompt] = useState(false);
+  const [prompt, setPrompt] = useState("");
   const [videoUrl, setVideoUrl] = useState(null);
   const [video, setVideo] = useState(null);
 
@@ -55,6 +55,22 @@ function App() {
     document.getElementById("upload-file").click();
   };
 
+  const sendtomodel = async () => {
+    try {
+      console.log(prompt);
+      const response = await axios.post(
+        "http://localhost:3000/api/modelRUN",
+        // Include data in the request body if required
+        {
+          
+        }
+      );
+      console.log("Model run successful", response.data);
+    } catch (error) {
+      console.error("Error running model", error);
+    }
+  };
+  
   const localUpload = async (event) => {
     const file = event.target.files[0];
     const videoObjectURL = URL.createObjectURL(file);
@@ -112,14 +128,16 @@ function App() {
             <div className="flex flex-row justify-center items-center gap-4 text-center p-4 font-monserrat h-full rounded-3xl">
               {video ? (
                 <div className="flex flex-row justify-center items-center gap-3">
-                  <label htmlFor="prompt">Prompt : </label>
+      
                   <TextField
                     id="outlined-basic"
                     label="Prompt ..."
                     variant="outlined"
+                    value={prompt}
+                    onChange={(e) => setPrompt(e.target.value)}
                   />
 
-                  <button className="bg-[#516AE9] rounded-lg p-3">
+                  <button onClick={sendtomodel} className="bg-[#516AE9] rounded-lg p-3">
                     Submit
                   </button>
                 </div>

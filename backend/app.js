@@ -47,39 +47,39 @@ app.post("/api/saveVideo", upload.single("video"), (req, res) => {
       return res.status(500).send("Error occurred while saving the file.");
     }
 
-    const pythonScriptPath = path.join(__dirname, '..', 'python', 'loadmodel.py');
+    res.json("File Saved")
+  });
+});
 
-    // Execute the Python script
-    exec(`python ${pythonScriptPath}`, (error, stdout, stderr) => {
-      if (error) {
-          console.error('Error executing script:', error);
-          return res.status(500).json({ error: 'Internal server error' });
-      }
+app.post("/api/modelRUN" , async (req,res) =>{
+  
+  const pythonScriptPath = path.join(__dirname, '..', 'python', 'loadmodel.py');
 
-      console.log('Script output:', stdout);
-      // Send the response to the client after executing the Python script
-    });
-    
+  // Execute the first Python script
+  exec(`python ${pythonScriptPath}`, (error, stdout, stderr) => {
+    if (error) {
+        console.error('Error executing loadmodel.py:', error);
+        return res.status(500).json({ error: 'Internal server error while executing loadmodel.py' });
+    }
+
+    console.log('loadmodel.py output:', stdout);
+    // Send the response to the client after executing the first Python script
+
+    // If the first script executed successfully, execute the second Python script
     const anotherpythonScript = path.join(__dirname, '..', 'python', 'createvideo.py');
-
     exec(`python ${anotherpythonScript}`, (error, stdout, stderr) => {
       if (error) {
-          console.error('Error executing script:', error);
-          return res.status(500).json({ error: 'Internal server error' });
+          console.error('Error executing createvideo.py:', error);
+          return res.status(500).json({ error: 'Internal server error while executing createvideo.py' });
       }
 
-      console.log('Script output:', stdout);
-      // Send the response to the client after executing the Python script
+      console.log('createvideo.py output:', stdout);
+      // Send the response to the client after executing the second Python script
       res.json({ output: stdout });
     });
-
-
   });
+} )
 
-
-
-
-});
 
 app.post("/submit-details", async (req, res) => {
   const { name, email, number } = req.body;
