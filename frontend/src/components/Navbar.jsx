@@ -5,6 +5,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { TextField } from "@mui/material";
+import Snackbar from "@mui/material/Snackbar";
 import axios from "axios";
 const style = {
   position: "absolute",
@@ -18,6 +19,21 @@ const style = {
   p: 4,
 };
 function Navbar() {
+  // snackbar
+  const [openSnack, setOpensnack] = React.useState(false);
+  const [authenticate, setAuthentic] = React.useState(false);
+  const handleClick = () => {
+    setOpensnack(true);
+  };
+
+  const handleClosesnack = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // states for the modal
@@ -28,6 +44,7 @@ function Navbar() {
     number: "",
   });
 
+  const [push, setPush] = useState(false);
   const [otp, setOtp] = useState();
 
   const [requestId, setRequest] = useState();
@@ -48,19 +65,54 @@ function Navbar() {
   // this is for the otp
   const submitOTP = async () => {
     try {
+      const headers = {
+        "X-API-KEY":
+          "neurelo_9wKFBp874Z5xFw6ZCfvhXTB7KmsbHuDA+mE09T3i49lScBOe3iqa0oBmKmehC3aw56YGaa1g/+/QrFmD7A0vWye4HNG6nk51p6i8x7out+VPJpHTshHYFe3Xi4UXF2nweoB+TwcU/rUNB/aA/2a3MhIvR+tzD/vhq4y0+OnRnGvdewwHqIR8TRY0rqmy87pa_F/f8yBK2UOEqY4TWwJ7KrbD/bp5o9fKHCOiFJTApRVs=",
+      };
+
+      axios
+        .post(
+          "https://ap-south-1.aws.neurelo.com/rest/User/__one?",
+          {
+            name: details.name,
+            phoneNo: details.number,
+            email: details.email,
+            isVerified: true,
+          },
+
+          {
+            headers,
+          }
+        )
+        .then((response) => {
+          console.log("Response:", response.data);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+      setOpensnack(true);
+      setAuthentic(true);
+      setTimeout(() => {
+        setOpensnack(false);
+      }, 3000);
       const response = await axios.post("http://localhost:3000/submit-otp", {
         otp: otp,
         requestId: requestId,
       });
       console.log("response is", response);
+      localStorage.setItem("otp", otp);
     } catch (err) {
       console.log("error is", err);
+      localStorage.setItem("otp", otp);
     }
   };
 
   const submitDetail = async () => {
     try {
       console.log(details);
+
+      // submit-details
+
       const response = await axios.post(
         "http://localhost:3000/submit-details",
         details
@@ -107,7 +159,7 @@ function Navbar() {
             type="button"
             className="text-white bg-[#516AE9] h-6 font-Montserrat hover:bg-indigo-100 hover:text-black transition-all duration-300 font-thin rounded-full font-monserrat text-white lg:text-base sm:text-sm text-xs lg:px-6 px-5 lg:h-12 lg:py-1 py-0 text-center mr-3 md:mr-0"
           >
-            authenticate
+            {authenticate ? <>Authenticated</> : <>Authenticate</>}
           </button>
 
           <button
@@ -188,7 +240,7 @@ function Navbar() {
             ) : (
               <Box sx={style}>
                 <Typography id="modal-modal-title" variant="h6" component="h2">
-                  Enter Your details
+                  Enter Your OTP
                 </Typography>
                 <div className="flex flex-col justify-center items-center gap-2 mt-4">
                   <TextField
@@ -209,6 +261,12 @@ function Navbar() {
             )}
           </Modal>
         </div>
+        <Snackbar
+          open={openSnack}
+          autoHideDuration={2000}
+          onClose={handleClosesnack}
+          message="Authenticated & User registered successfully"
+        />
       </div>
     </nav>
   );

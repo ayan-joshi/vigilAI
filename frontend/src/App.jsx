@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import Navbar from "./components/Navbar";
 import "./App.css";
@@ -32,8 +32,20 @@ function App() {
 
   // states for the modal
   const [open, setOpen] = React.useState(false);
+  const [otp, setOtp] = useState();
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  // useEffect for the otp
+  useEffect(() => {
+    const otp = localStorage.getItem("otp");
+    if (otp) {
+      console.log("otp is", otp);
+    } else {
+      console.log("otp is not present ");
+    }
+    setOtp(otp);
+  }, [<Navbar />]);
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
@@ -125,8 +137,8 @@ function App() {
             ) : (
               <div className="flex flex-col justify-center items-center gap-2">
                 {video ? (
-                  <div>
-                    <video controls width="400">
+                  <div className="h-full">
+                    <video controls width="400" style={{ height: "300px" }}>
                       <source src={video} type="video/mp4" />
                       Your browser does not support the video tag.
                     </video>

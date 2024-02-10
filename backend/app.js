@@ -46,7 +46,7 @@ app.post("/submit-details", async (req, res) => {
     // Send OTP
     vonage.verify
       .start({
-        number: number,
+        number: "917276079913",
         brand: "YourApp",
       })
       .then((resp) => {
