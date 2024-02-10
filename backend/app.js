@@ -29,14 +29,26 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // POST endpoint for saving video
+const fs = require("fs");
+
 app.post("/api/saveVideo", upload.single("video"), (req, res) => {
   // Check if file was uploaded successfully
   if (!req.file) {
     return res.status(400).send("No file uploaded.");
   }
 
-  // Return a success message with the filename
-  res.send(`Video '${req.file.originalname}' saved successfully.`);
+  // Define the new file name
+  const newFileName = "raw.mp4";
+
+  // Rename the uploaded file
+  fs.rename(req.file.path, req.file.destination + "/" + newFileName, (err) => {
+    if (err) {
+      return res.status(500).send("Error occurred while saving the file.");
+    }
+
+    // Return a success message with the new filename
+    res.send(`Video '${newFileName}' saved successfully.`);
+  });
 });
 
 app.post("/submit-details", async (req, res) => {
