@@ -118,7 +118,7 @@ function Navbar() {
             isMobileMenuOpen ? "" : "hidden"
           }`}
         >
-          <p className="font-monserrat font-thin ">
+          <p className="font-monserrat font-regular ">
             Simplified Verison For You
           </p>
           {/* modal for the details */}
