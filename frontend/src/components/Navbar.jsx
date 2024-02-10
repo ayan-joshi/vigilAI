@@ -28,6 +28,10 @@ function Navbar() {
     number: "",
   });
 
+  const [otp, setOtp] = useState();
+
+  const [requestId, setRequest] = useState();
+
   // function for details when changed
   const handleFieldChange = (event) => {
     const { id, value } = event.target;
@@ -35,6 +39,23 @@ function Navbar() {
       ...prevState,
       [id]: value,
     }));
+  };
+
+  const handleOtpChange = (event) => {
+    setOtp(event.target.value);
+  };
+
+  // this is for the otp
+  const submitOTP = async () => {
+    try {
+      const response = await axios.post("http://localhost:3000/submit-otp", {
+        otp: otp,
+        requestId: requestId,
+      });
+      console.log("response is", response);
+    } catch (err) {
+      console.log("error is", err);
+    }
   };
 
   const submitDetail = async () => {
@@ -46,6 +67,8 @@ function Navbar() {
       );
 
       console.log("Response from backend:", response.data);
+      setRequest(response.data);
+      // console.log("setted requestId is ", requestId);
 
       // Handle response from backend if necessary
     } catch (error) {
@@ -128,39 +151,62 @@ function Navbar() {
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
           >
-            <Box sx={style}>
-              <Typography id="modal-modal-title" variant="h6" component="h2">
-                Enter Your details
-              </Typography>
-              <div className="flex flex-col justify-center items-center gap-2 mt-4">
-                <TextField
-                  required
-                  id="name"
-                  label="Name"
-                  onChange={handleFieldChange}
-                />
-                <TextField
-                  required
-                  id="email"
-                  label="Email"
-                  onChange={handleFieldChange}
-                />
+            {!requestId ? (
+              <Box sx={style}>
+                <Typography id="modal-modal-title" variant="h6" component="h2">
+                  Enter Your details
+                </Typography>
+                <div className="flex flex-col justify-center items-center gap-2 mt-4">
+                  <TextField
+                    required
+                    id="name"
+                    label="Name"
+                    onChange={handleFieldChange}
+                  />
+                  <TextField
+                    required
+                    id="email"
+                    label="Email"
+                    onChange={handleFieldChange}
+                  />
 
-                <TextField
-                  required
-                  id="number"
-                  label="Phone Number"
-                  onChange={handleFieldChange}
-                />
+                  <TextField
+                    required
+                    id="number"
+                    label="Phone Number"
+                    onChange={handleFieldChange}
+                  />
 
-                <button
-                  className="bg-[#000000]  p-4 rounded-lg  text-white"
-                  onClick={submitDetail}
-                >
-                  Submit
-                </button>
-              </div>
-            </Box>
+                  <button
+                    className="bg-[#000000]  p-4 rounded-lg  text-white"
+                    onClick={submitDetail}
+                  >
+                    Submit
+                  </button>
+                </div>
+              </Box>
+            ) : (
+              <Box sx={style}>
+                <Typography id="modal-modal-title" variant="h6" component="h2">
+                  Enter Your details
+                </Typography>
+                <div className="flex flex-col justify-center items-center gap-2 mt-4">
+                  <TextField
+                    required
+                    id="name"
+                    label="Name"
+                    onChange={handleOtpChange}
+                  />
+
+                  <button
+                    className="bg-[#000000]  p-4 rounded-lg  text-white"
+                    onClick={submitOTP}
+                  >
+                    Submit OTP
+                  </button>
+                </div>
+              </Box>
+            )}
           </Modal>
         </div>
       </div>

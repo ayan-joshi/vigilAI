@@ -44,17 +44,47 @@ app.post("/submit-details", async (req, res) => {
 
   try {
     // Send OTP
-    const resp = await vonage.verify.start({ number: number, brand: "vonage" });
-    // console.log("Request ID:", resp.request_id);
-    const request_id = resp.request_id;
-    console.log(request_id);
-    res.json({ success: true, requestId: request_id });
+    vonage.verify
+      .start({
+        number: number,
+        brand: "YourApp",
+      })
+      .then((resp) => {
+        console.log("Request ID:", resp.request_id);
+        res.json({ requestId: resp.request_id });
+      })
+      .catch((err) => {
+        console.error("Error:", err);
+        res.status(500).json({ error: err.message });
+      });
   } catch (err) {
     console.error("Error:", err);
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ error: err.message });
   }
 
   console.log("Received user details:", { name, email, number });
+});
+
+app.post("/submit-otp", async (req, res) => {
+  const { otp, requestId } = req.body;
+  console.log(req.body);
+  try {
+    vonage.verify
+      .check(requestId, otp)
+      .then((resp) => {
+        console.log("Verification result:", resp);
+        res.json({ result: resp });
+      })
+      .catch((err) => {
+        console.error("Error:", err);
+        res.status(500).json({ error: err.message });
+      });
+  } catch (err) {
+    console.error("Error:", err);
+    res.status(500).json({ error: err.message });
+  }
+
+  //   console.log("Received user details:", { name, email, number });
 });
 
 // Start the server
