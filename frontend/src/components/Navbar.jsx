@@ -1,7 +1,57 @@
 // Navbar.js
 import React, { useState } from "react";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import Modal from "@mui/material/Modal";
+import { TextField } from "@mui/material";
+import axios from "axios";
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
 function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // states for the modal
+  const [open, setOpen] = React.useState(false);
+  const [details, setDetails] = useState({
+    name: "",
+    email: "",
+    number: "",
+  });
+
+  // function for details when changed
+  const handleFieldChange = (event) => {
+    const { id, value } = event.target;
+    setDetails((prevState) => ({
+      ...prevState,
+      [id]: value,
+    }));
+  };
+
+  const submitDetail = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/submit-details",
+        details
+      );
+      console.log("Response from backend:", response.data);
+      // Handle response from backend if necessary
+    } catch (error) {
+      console.error("Error submitting details:", error);
+      // Handle error
+    }
+  };
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -27,6 +77,7 @@ function Navbar() {
 
         <div className="flex md:order-2 justify-center align-middle items-center">
           <button
+            onClick={handleOpen}
             type="button"
             className="text-white bg-[#516AE9] h-6 font-Montserrat hover:bg-indigo-100 hover:text-black transition-all duration-300 font-thin rounded-full font-monserrat text-white lg:text-base sm:text-sm text-xs lg:px-6 px-5 lg:h-12 lg:py-1 py-0 text-center mr-3 md:mr-0"
           >
@@ -64,28 +115,39 @@ function Navbar() {
             isMobileMenuOpen ? "" : "hidden"
           }`}
         >
-          {/* <ul className="flex flex-col p-4 md:p-0 mt-4 text-base font-normal md:flex-row md:space-x-8 md:mt-0 font-Montserrat"> */}
-          {/* <li>
-              <p className="block py-2 pl-3 pr-4 text-black rounded lg:hover:scale-125 cursor-pointer transition-all duration-300 md:p-0">
-                Home
-              </p>
-            </li>
-            <li>
-              <p className="block py-2 pl-3 pr-4 text-black rounded lg:hover:scale-125 cursor-pointer transition-all duration-300 md:p-0">
-                About Us
-              </p>
-            </li>
-            {/* <li onClick={() => handleClickScroll("careers-section")}> */}
-          {/* <li>
-              <p className="block py-2 pl-3 pr-4 text-black rounded lg:hover:scale-125 cursor-pointer transition-all duration-300 md:p-0">
-                Contact Us
-              </p>
-            </li> 
-          </ul>{" "}
-          */}
           <p className="font-monserrat font-thin ">
             Simplified Verison For You
           </p>
+          {/* modal for the details */}
+          <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box sx={style}>
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+                Enter Your details
+              </Typography>
+              <div className="flex flex-col justify-center items-center gap-2 mt-4">
+                <TextField required id="outlined-required" label="Name" />
+                <TextField required id="outlined-required" label="Email" />
+
+                <TextField
+                  required
+                  id="outlined-required"
+                  label="Phone Number"
+                />
+
+                <button
+                  className="bg-[#000000]  p-4 rounded-lg  text-white"
+                  onClick={submitDetail}
+                >
+                  Submit
+                </button>
+              </div>
+            </Box>
+          </Modal>
         </div>
       </div>
     </nav>

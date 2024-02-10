@@ -1,3 +1,4 @@
+import React from "react";
 import { useState } from "react";
 import Navbar from "./components/Navbar";
 import "./App.css";
@@ -5,6 +6,22 @@ import TextField from "@mui/material/TextField";
 import CircularProgress from "@mui/material/CircularProgress";
 import UploadIcon from "@mui/icons-material/Upload";
 import axios from "axios";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import Modal from "@mui/material/Modal";
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
 
 function App() {
   const [loading, setLoading] = useState(false);
@@ -12,6 +29,11 @@ function App() {
   const [prompt, setPrompt] = useState(false);
   const [videoUrl, setVideoUrl] = useState(null);
   const [video, setVideo] = useState(null);
+
+  // states for the modal
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
@@ -84,6 +106,10 @@ function App() {
                     label="Prompt ..."
                     variant="outlined"
                   />
+
+                  <button className="bg-[#516AE9] rounded-lg p-3">
+                    Submit
+                  </button>
                 </div>
               ) : (
                 <p className="text-xl  font-[10]  ">
@@ -98,33 +124,36 @@ function App() {
               <CircularProgress />
             ) : (
               <div className="flex flex-col justify-center items-center gap-2">
-                {video && (
+                {video ? (
                   <div>
                     <video controls width="400">
                       <source src={video} type="video/mp4" />
                       Your browser does not support the video tag.
                     </video>
                   </div>
-                )}
-                <div
-                  className="h-32 w-72  bg-gray-300 rounded-3xl bg-clip-padding backdrop-filter backdrop-blur-2xl bg-opacity-65 text-center flex flex-col justify-center items-center cursor-pointer"
-                  // onClick={handleUploadButtonClick}
-                  onClick={handleUploadButtonClick}
-                >
-                  <UploadIcon fontSize="large" />
-                  {file ? file.name : "Upload Video"}
-                </div>
-                <input
-                  type="file"
-                  id="upload-file"
-                  accept="video/*"
-                  onChange={localUpload}
-                  style={{ display: "none" }}
-                />
+                ) : (
+                  <div className="flex flex-col justify-center items-center gap-2">
+                    <div
+                      className="h-32 w-72  bg-gray-300 rounded-3xl bg-clip-padding backdrop-filter backdrop-blur-2xl bg-opacity-65 text-center flex flex-col justify-center items-center cursor-pointer"
+                      // onClick={handleUploadButtonClick}
+                      onClick={handleUploadButtonClick}
+                    >
+                      <UploadIcon fontSize="large" />
+                      {file ? file.name : "Upload Video"}
+                    </div>
+                    <input
+                      type="file"
+                      id="upload-file"
+                      accept="video/*"
+                      onChange={localUpload}
+                      style={{ display: "none" }}
+                    />
 
-                <button className="h-20 w-72 rounded-full bg-gray-300 rounded-3xl bg-clip-padding backdrop-filter backdrop-blur-2xl bg-opacity-65 text-center flex flex-row justify-center items-center">
-                  Upload
-                </button>
+                    <button className="h-20 w-72 rounded-full bg-gray-300 rounded-3xl bg-clip-padding backdrop-filter backdrop-blur-2xl bg-opacity-65 text-center flex flex-row justify-center items-center">
+                      Upload
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 

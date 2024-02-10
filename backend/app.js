@@ -3,6 +3,7 @@ const multer = require("multer");
 const path = require("path");
 
 const app = express();
+app.use(express.json());
 const port = 3000;
 const videosDirectory = path.join(__dirname, "..", "Videos");
 
@@ -27,6 +28,11 @@ app.post("/api/saveVideo", upload.single("video"), (req, res) => {
 
   // Return a success message with the filename
   res.send(`Video '${req.file.originalname}' saved successfully.`);
+});
+
+app.post("/submit-details", (req, res) => {
+  console.log(req.body);
+  res.send(req.body);
 });
 
 // Start the server
