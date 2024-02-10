@@ -18,7 +18,9 @@ for frame_filename in frame_filenames:
     frames.append(frame)
 
 # Define the output video path
-output_video_path = "output_video.mp4"
+output_folder = "../Videos/"
+output_filename = "output.mp4"
+output_video_path = os.path.join(output_folder, output_filename)
 
 # Write the frames to a video file
 imageio.mimsave(output_video_path, frames, fps=30)
