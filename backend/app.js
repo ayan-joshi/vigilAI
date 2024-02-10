@@ -4,6 +4,7 @@ const path = require("path");
 const cors = require("cors");
 const app = express();
 const { Vonage } = require("@vonage/server-sdk");
+const { exec } = require('child_process');
 
 app.use(cors());
 app.use(express.json());
@@ -46,9 +47,38 @@ app.post("/api/saveVideo", upload.single("video"), (req, res) => {
       return res.status(500).send("Error occurred while saving the file.");
     }
 
-    // Return a success message with the new filename
-    res.send(`Video '${newFileName}' saved successfully.`);
+    const pythonScriptPath = path.join(__dirname, '..', 'python', 'loadmodel.py');
+
+    // Execute the Python script
+    exec(`python ${pythonScriptPath}`, (error, stdout, stderr) => {
+      if (error) {
+          console.error('Error executing script:', error);
+          return res.status(500).json({ error: 'Internal server error' });
+      }
+
+      console.log('Script output:', stdout);
+      // Send the response to the client after executing the Python script
+    });
+    
+    const anotherpythonScript = path.join(__dirname, '..', 'python', 'createvideo.py');
+
+    exec(`python ${anotherpythonScript}`, (error, stdout, stderr) => {
+      if (error) {
+          console.error('Error executing script:', error);
+          return res.status(500).json({ error: 'Internal server error' });
+      }
+
+      console.log('Script output:', stdout);
+      // Send the response to the client after executing the Python script
+      res.json({ output: stdout });
+    });
+
+
   });
+
+
+
+
 });
 
 app.post("/submit-details", async (req, res) => {
