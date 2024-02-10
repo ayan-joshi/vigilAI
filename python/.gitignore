@@ -24,7 +24,12 @@
 !cfg/yolov3*.cfg
 
 storage.googleapis.com
+
+node_modules
+yolov5x.pt
 runs/*
+yolov5x
+
 data/*
 data/images/*
 !data/*.yaml

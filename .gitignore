@@ -7,10 +7,12 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-
+Videos
 node_modules
 dist
 dist-ssr
+yolov5x
+
 key.txt
 *.local
 

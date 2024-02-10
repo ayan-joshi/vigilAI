@@ -4,6 +4,7 @@ const path = require("path");
 const cors = require("cors");
 const app = express();
 const { Vonage } = require("@vonage/server-sdk");
+const { exec } = require('child_process');
 
 app.use(cors());
 app.use(express.json());
@@ -29,14 +30,55 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // POST endpoint for saving video
+const fs = require("fs");
+
 app.post("/api/saveVideo", upload.single("video"), (req, res) => {
   // Check if file was uploaded successfully
   if (!req.file) {
     return res.status(400).send("No file uploaded.");
   }
 
-  // Return a success message with the filename
-  res.send(`Video '${req.file.originalname}' saved successfully.`);
+  // Define the new file name
+  const newFileName = "raw.mp4";
+
+  // Rename the uploaded file
+  fs.rename(req.file.path, req.file.destination + "/" + newFileName, (err) => {
+    if (err) {
+      return res.status(500).send("Error occurred while saving the file.");
+    }
+
+    const pythonScriptPath = path.join(__dirname, '..', 'python', 'loadmodel.py');
+
+    // Execute the Python script
+    exec(`python ${pythonScriptPath}`, (error, stdout, stderr) => {
+      if (error) {
+          console.error('Error executing script:', error);
+          return res.status(500).json({ error: 'Internal server error' });
+      }
+
+      console.log('Script output:', stdout);
+      // Send the response to the client after executing the Python script
+    });
+    
+    const anotherpythonScript = path.join(__dirname, '..', 'python', 'createvideo.py');
+
+    exec(`python ${anotherpythonScript}`, (error, stdout, stderr) => {
+      if (error) {
+          console.error('Error executing script:', error);
+          return res.status(500).json({ error: 'Internal server error' });
+      }
+
+      console.log('Script output:', stdout);
+      // Send the response to the client after executing the Python script
+      res.json({ output: stdout });
+    });
+
+
+  });
+
+
+
+
 });
 
 app.post("/submit-details", async (req, res) => {
