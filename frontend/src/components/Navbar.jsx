@@ -39,11 +39,14 @@ function Navbar() {
 
   const submitDetail = async () => {
     try {
+      console.log(details);
       const response = await axios.post(
         "http://localhost:3000/submit-details",
         details
       );
+
       console.log("Response from backend:", response.data);
+
       // Handle response from backend if necessary
     } catch (error) {
       console.error("Error submitting details:", error);
@@ -130,13 +133,24 @@ function Navbar() {
                 Enter Your details
               </Typography>
               <div className="flex flex-col justify-center items-center gap-2 mt-4">
-                <TextField required id="outlined-required" label="Name" />
-                <TextField required id="outlined-required" label="Email" />
+                <TextField
+                  required
+                  id="name"
+                  label="Name"
+                  onChange={handleFieldChange}
+                />
+                <TextField
+                  required
+                  id="email"
+                  label="Email"
+                  onChange={handleFieldChange}
+                />
 
                 <TextField
                   required
-                  id="outlined-required"
+                  id="number"
                   label="Phone Number"
+                  onChange={handleFieldChange}
                 />
 
                 <button
