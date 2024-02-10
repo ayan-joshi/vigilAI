@@ -6,7 +6,9 @@ import os
 model = torch.hub.load("ultralytics/yolov5", "yolov5x")
 
 # Load video
-video_path = "video.mp4"
+video_folder = "../Videos/"
+video_filename = "raw.mp4"
+video_path = os.path.join(video_folder, video_filename)
 cap = cv2.VideoCapture(video_path)
 
 # Check if video opened successfully
