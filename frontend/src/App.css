@@ -8,3 +8,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
 
  /* @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,300;0,400;1,100;1,200&family=Roboto&display=swap'); */
+
+
+ @font-face {
+    font-family: 'Neue';
+    src: url('frontend/src/fonts/Neue.ttf') format('truetype');
+  }
+  
+  @font-face {
+    font-family: 'Montserrat';
+    src: url('frontend/src/fonts/Montserrat-Regular.ttf') format('truetype');
+  }
+  

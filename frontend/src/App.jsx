@@ -74,13 +74,13 @@ function App() {
   };
 
   return (
-    <div className="flex flex-col w-full h-screen bg-gradient-to-b from-blue-100 via-blue-200 to-blue-500">
+    <div className="flex flex-col justify-evenly w-full h-screen bg-gradient-to-b from-blue-100 via-blue-200 to-blue-500">
       <div className="sticky top-5 flex flex-row items-center justify-center">
         <Navbar />
       </div>
 
-      <div className="flex-1 flex flex-row justify-center items-center">
-        <p className="mt-10 text-center  text-xl  font-comic  w-4/5">
+      <div className="flex-1 flex flex-row justify-center items-center h-24">
+        <p className="mt-10 text-center  font-regular font-monserrat  text-xl  text-[10]  w-4/5">
           A real-time video analysis system that understands natural language
           prompts and highlights relevant sections based on object detection,
           action recognition, and attribute recognition.
@@ -112,7 +112,7 @@ function App() {
                   </button>
                 </div>
               ) : (
-                <p className="text-xl  font-[10]  ">
+                <p className=" font-monserrat font-regular ">
                   Please begin by uploading your video prior to initiating the
                   prompt detection process within the content.
                 </p>
