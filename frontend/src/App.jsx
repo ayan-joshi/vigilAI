@@ -55,6 +55,14 @@ function App() {
     document.getElementById("upload-file").click();
   };
 
+  const checkVrification = async () => {
+    setVerified(true);
+  };
+
+  useEffect(() => {
+    console.log(isVerified);
+  }, [isVerified]);
+
   const sendtomodel = async () => {
     try {
       console.log(prompt);
@@ -116,15 +124,15 @@ function App() {
       <div className="h-full flex justify-center items-center">
         <div className="w-11/12 h-5/6 flex flex-row justify-between items-center border rounded-3xl bg-[#E1F6F9]  realtive">
           {/* Div to cover the whole area */}
-          {!isVerified && (
+          {/* {!isVerified && (
             <div
               className="font-monserrat   absolute top-50 left-15 w-11/12   isolate aspect-video     h-[63%]   bg-[#DBE0FA] bg-opacity-70 z-10  text-black text-5xl  flex flex-col justify-center items-center  rounded-3xl  "
               onClick={() => console.log("Covering Div Clicked")}
               style={{ backdropFilter: "blur(10px)" }}
             >
               Authenticate Yourself to use VigilAI
-            </div>
-          )}
+            </div> */}
+          {/* )} */}
           <div
             className="w-1/2 flex flex-col justify-center items-center h-full rounded-3xl"
             style={{
