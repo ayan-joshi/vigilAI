@@ -1,5 +1,6 @@
 # VigilAI: Your Eyes in the Sky, Powered by AI
 
+
 ![logo](https://github.com/ItsApex/vigilAI/assets/96243602/19af8378-b1c4-4ac1-8c50-aafc485e339a)
 
 
